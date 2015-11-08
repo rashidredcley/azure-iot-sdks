@@ -2,7 +2,7 @@
 
 set -e
 
-sdk_rep="http://download.linino.org/linino-utils/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.6-linaro_uClibc-0.9.33.2-32bit.tar.bz2"
+sdk_repo="http://download.linino.org/linino-utils/OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.6-linaro_uClibc-0.9.33.2-32bit.tar.bz2"
 install_root="$HOME"
 openwrt_folder="openwrt"
 openwrt_sdk_folder="sdk"
@@ -74,7 +74,7 @@ download_sdk()
     rm -r -f $openwrt_sdk_folder
   fi
 
-  #wget $sdk_repo -O openwrtsdk.tar.bz2
+  wget $sdk_repo -O openwrtsdk.tar.bz2
 
   tar xvf openwrtsdk.tar.bz2
 

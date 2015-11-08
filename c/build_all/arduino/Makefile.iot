@@ -17,7 +17,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/azure-iot-sdks
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libopenssl +libuuid +libcurl
+  DEPENDS:=+libopenssl +libuuid +libcurl +libpthread
   TITLE:=Azure IoT SDK
 endef
 
@@ -32,6 +32,9 @@ endef
 
 define Build/Configure
   IN_OPENWRT=1 \
+  TARGET_CPPFLAGS="$(TARGET_CPPFLAGS)" \
+  TARGET_CFLAGS="$(TARGET_CFLAGS) -DIN_OPENWRT" \
+  TARGET_LDFLAGS="$(TARGET_LDFLAGS)" \
   AR="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)ar" \
   AS="$(TOOLCHAIN_DIR)/bin/$(TARGET_CC) -c $(TARGET_CFLAGS)" \
   LD="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)ld" \
@@ -43,9 +46,6 @@ define Build/Configure
   STRIP="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)strip" \
   OBJCOPY="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)objcopy" \
   OBJDUMP="$(TOOLCHAIN_DIR)/bin/$(TARGET_CROSS)objdump" \
-  TARGET_CPPFLAGS="$(TARGET_CPPFLAGS)" \
-  TARGET_CFLAGS="$(TARGET_CFLAGS)" \
-  TARGET_LDFLAGS="$(TARGET_LDFLAGS)" \
   cmake -DCMAKE_FIND_ROOT_PATH="$(TOOLCHAIN_DIR)" $(PKG_BUILD_DIR)/CMakeLists.txt -DIN_OPENWRT=1 -Duse_amqp:BOOL=OFF -Duse_http:BOOL=ON -Duse_mqtt:BOOL=OFF
 endef
 
@@ -71,6 +71,7 @@ define Build/Compile
 #	$(STRIP) $(PKG_BUILD_DIR)/common/*.a
 #	$(STRIP) $(PKG_BUILD_DIR)/iothub_client/*.a
 #	$(STRIP) $(PKG_BUILD_DIR)/serializer/*.a
+#	$(STRING) $(PKG_BUILD_DIR)/serializer/samples/simplesample_http/simplesample_http
 endef
 
 define Package/azure-iot-sdks/install
@@ -79,7 +80,7 @@ define Package/azure-iot-sdks/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/iothub_client/*.a $(1)/usr/lib/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/serializer/*.a $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/share/azure-iot-sdk/samples
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/iothub_client/samples/iothub_client_sample_http/iothub_client_sample_http $(1)/usr/share/azure-iot-sdk/samples/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/serializer/samples/simplesample_http/simplesample_http $(1)/usr/share/azure-iot-sdk/samples/
 endef
 
 $(eval $(call BuildPackage,azure-iot-sdks))
